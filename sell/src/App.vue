@@ -17,22 +17,33 @@
 </template>
 
 <script>
+  import {urlParse} from './common/js/util.js';
   import header from './components/header/header.vue';
   const ERR_OK = 0;
 
   export default {
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            let queryParam = urlParse();
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      var api = '/api/seller' + '?' + Math.random();
-      api = String(api);
+      // 避免请求不重复
+      // var api = '/api/seller' + '?' + Math.random();
+      // api = String(api);
+
+      // api
+      var api = '/api/seller?' + this.seller.id;
       this.$http.get(api).then((response) => {
         response = response.body;
         if (response.errno === ERR_OK) {
-          this.seller = response.data;
+          this.seller = Object.assign({}, this.seller, response.data);
+          console.log(this.seller);
         }
       });
     },

@@ -58,14 +58,10 @@
       this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee'];
     },
     mounted() {
+      // mounted执行顺序要早于watch里面的执行
+      console.log(this.$refs.seller);
+      console.log(this.$refs.seller.offsetHeight);
       this._initScroll();
-      // 下面这种方法是可以的
-      // this.$http('').then((res) => {
-      //   this.$nextTick(() => {
-      //     // mounted执行顺序要早于watch里面的执行
-      //     this._initScroll();
-      //   });
-      // });
     },
     watch: {
       'seller'() {
@@ -74,29 +70,13 @@
     },
     methods: {
       _initScroll() {
-        // 使用Promise函数实现滚动
-        return new Promise((resolve, reject) => {
-          this.$nextTick(() => {
-            if (!this.sellerScroll) {
-              this.sellerScroll = new BScroll(this.$refs.seller, {
-                click: true
-              });
-              resolve();
-            } else {
-              this.sellerScroll.refresh();
-              reject();
-            }
+        if (!this.sellerScroll) {
+          this.sellerScroll = new BScroll(this.$refs.seller, {
+            click: true
           });
-        });
-
-        // 下面的实现方法是要在mounted钩子函数里面使用伪造请求的方式配合使用，详细的请看mounted钩子函数里面注释的另外一段代码
-        // if (!this.sellerScroll) {
-        //   this.sellerScroll = new BScroll(this.$refs.seller, {
-        //     click: true
-        //   });
-        // } else {
-        //   this.sellerScroll.refresh();
-        // }
+        } else {
+          this.sellerScroll.refresh();
+        }
       }
     },
     props: {
